@@ -10,6 +10,5 @@ module.exports = class TestRoute {
     const api = express.Router();
     api.get('/', this.test.handler);
     app.use('/test', api);
-    console.log('on');
   }
 };
