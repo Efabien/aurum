@@ -1,12 +1,16 @@
 // App Config
-const { APP, TELEGRAM } = require('./config');
+const { APP, TELEGRAM, NLP } = require('./config');
 const port = APP.port;
+const knwlg = require('./modules/brain/resources/knowledge');
+const knwlg2 = require('./modules/brain/resources/knowledge2');
 
 // Internal dependencies
 const ErrorHandler = require('./middlewares/error-handler');
 const TelegramClient = require('telegram-bot-api');
 const MessageListner = require('./modules/telegram/message-listner');
 const PaypiteClient = require('./modules/paypite/paypite-client');
+const Brain = require('./modules/brain/index');
+const MessageDispatcher = require('./modules/message-dispatcher');
 
 //utils
 const errorHandler = new ErrorHandler();
@@ -17,7 +21,9 @@ const telegramClient = new TelegramClient({
   }
 });
 const paypiteClient = new PaypiteClient();
-const messageLister = new MessageListner({ telegramClient, paypiteClient });
+const brain = new Brain([knwlg2, knwlg], { degree: NLP.degree, scope: NLP.scope });
+const messageDispatcher = new MessageDispatcher({ brain });
+const messageLister = new MessageListner({ telegramClient, paypiteClient, messageDispatcher });
 messageLister.run();
 
 // Internal dependencies

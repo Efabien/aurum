@@ -2,14 +2,14 @@ module.exports = class MessageListner {
   constructor(modules) {
     this._telegramClient = modules.telegramClient;
     this._paypiteClient = modules.paypiteClient;
+    this._dispatcher = modules.messageDispatcher;
     this.run = this.run.bind(this);
   }
 
   async run() {
     try {
       this._telegramClient.on('message', async (message) => {
-        const resp = await this.askPaypiteMarketRates(message.chat.id);
-        console.log(resp);
+        this._dispatcher.process(message.text);
       });
     } catch (e) {
       console.log(e);
@@ -33,7 +33,7 @@ module.exports = class MessageListner {
 
   async askPaypiteMarketRates(to) {
     const data = await this._paypiteClient.getMarketRate();
-    const startMessage = '<b>Le cour sur le marché paypite sont les suivants</b>: \n';
+    const startMessage = '<b>Le cours sur le marché Paypite sont les suivants</b>: \n';
     const rates = data.cours.reduce((resp, item) => {
       return resp += `Paire ${item.paire} : ${item.meilleurPrix}\n`;
     }, '');
