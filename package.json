@@ -24,7 +24,6 @@
   "dependencies": {
     "body-parser": "^1.17.1",
     "botbrain": "git+https://github.com/Efabien/brain.git",
-    "brain": "git+https://github.com/Efabien/brain.git#master",
     "cheerio": "latest",
     "cors": "^2.8.4",
     "express": "^4.16.2",
