@@ -1,15 +1,15 @@
 // App Config
 const { APP, TELEGRAM, NLP } = require('./config');
 const port = APP.port;
-const knwlg = require('./modules/brain/resources/knowledge');
-const knwlg2 = require('./modules/brain/resources/knowledge2');
+const knwlg = require('botbrain/resources/knowledge');
+const knwlg2 = require('botbrain/resources/knowledge2');
 
 // Internal dependencies
 const ErrorHandler = require('./middlewares/error-handler');
 const TelegramClient = require('telegram-bot-api');
 const MessageListner = require('./modules/telegram/message-listner');
 const PaypiteClient = require('./modules/paypite/paypite-client');
-const Brain = require('./modules/brain/index');
+const Brain = require('botbrain/index');
 const MessageDispatcher = require('./modules/message-dispatcher');
 
 //utils
