@@ -22,9 +22,9 @@ const telegramClient = new TelegramClient({
 });
 const paypiteClient = new PaypiteClient();
 const brain = new Brain([knwlg2, knwlg], { degree: NLP.degree, scope: NLP.scope });
-const messageDispatcher = new MessageDispatcher({ brain });
-const messageLister = new MessageListner({ telegramClient, paypiteClient, messageDispatcher });
-messageLister.run();
+const messageDispatcher = new MessageDispatcher({ brain, telegramClient, paypiteClient });
+const messageListner = new MessageListner({ telegramClient, messageDispatcher });
+messageListner.run();
 
 // Internal dependencies
 const ExpressBootstrapper = require('./modules/express-bootstrapper');
