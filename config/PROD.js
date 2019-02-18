@@ -14,7 +14,7 @@ module.exports = Object.freeze(
     },
 
     PAYPITE: {
-      url: 'https://compte-staging.paypite.fr',
+      url: 'https://compte.paypite.fr',
       currenciesId: {
         EUR: '5a2a997c5f9123e6010d39a5',
         MGA: '5a2a99815f9123e6010d3a00',
