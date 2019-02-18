@@ -3,8 +3,8 @@ module.exports = {
 		'currency': {
 			'BTC': [['bitcoin']],
 			'ETH': [['ethereum'], ['ether']],
-			'EUR': [['euro'], ['eur'], ['l\'euro'], ['€']],
-			'MGA': [['ariary'], ['franc malgache'], ['Ar'], ['MGA']],
+			'EUR': [['euro'], ['eur'], ['l\'euro'], ['€'], ['Euro']],
+			'MGA': [['ariary'], ['franc malgache'], ['Ar'], ['MGA'], ['mga'], ['Ariary'], ['AR']],
 			'XOF': [['franc cfa'], ['cfa'], ['CFA'], ['XOF'], ['xof']]
 		}
 	},
