@@ -23,8 +23,8 @@ module.exports = Object.freeze(
         ETH: '5a6976f4f36d286a1cb31f2e'
       },
       login: {
-        email: 'fabien050988@gmail.com',
-        password: 'enonedevxanadulyrecohsYsT3ek'
+        email: process.env.PAYPITE_EMAIL,
+        password: process.env.PAYPITE_PWD
       }
     }
   }
