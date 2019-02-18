@@ -6,13 +6,17 @@ module.exports = class MessageListner {
   }
 
   async run() {
-    try {
-      this._telegramClient.on('message', async (message) => {
+    this._telegramClient.on('message', async (message) => {
+      try {
         await this._dispatcher.process(message);
-      });
-    } catch (e) {
-      console.log(e);
-    }
+      } catch (e) {
+        this._telegramClient.sendMessage({
+          chat_id: message.chat.id,
+          text: 'Ouppps, quelque chose c\'est mal passé!'
+        });
+        console.log(e);
+      }
+    });
   }
 };
 
