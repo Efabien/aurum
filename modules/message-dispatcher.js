@@ -3,22 +3,30 @@ module.exports = class MessageDispatcher {
     this._brain = modules.brain;
     this._telegramClient = modules.telegramClient;
     this._paypiteClient = modules.paypiteClient;
+    this._dataAnalyser = modules.dataAnalyser;
     this.process = this.process.bind(this);
     this._map = {
       'greating': '_great',
-      'askRate': 'askPaypiteMarketRates'
+      'askRate': 'askPaypiteMarketRates',
+      'askTodaysSellsByMArket': 'askTodaysSellsByMArket'
     };
   }
 
   async process(message) {
-    const analyse = this._detect(message.text);
-    const method = this._map[analyse.intent];
-    if (!method) return this._unknown(message.chat.id);
-    return this[method](message.chat.id);
+    try {
+      const analyse = this._detect(message.text);
+      const method = this._map[analyse.intent];
+      if (!method) return this._unknown(message.chat.id);
+      return this[method](message.chat.id, message.text);
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   _detect(text) {
-    return this._brain.detect(text)
+    const hold = this._brain.detect(text);
+    console.log(hold);
+    return hold
     .sort((a, b) => b.score - a.score)[0];
   }
 
@@ -45,6 +53,27 @@ module.exports = class MessageDispatcher {
     }, '');
     const toSend = startMessage + rates;
     return this._replyHtml(to, toSend);
+  }
+
+  async askTodaysSellsByMArket(to, text) {
+    const keys = this._brain.extract(text, 'currency');
+    const curCode = keys.currency && keys.currency.length ? keys.currency[0] : 'EUR';
+    const response = await this._paypiteClient.getExchangeHistory(curCode);
+    const holder = this._dataAnalyser.getTodaySells(response.data);
+    const quantity = holder.reduce((total, item) => {
+      return total += item.amount;
+    }, 0);
+    const fiatAmount = holder.reduce((total, item) => {
+      let toTake = 0;
+      if (item.meta && item.meta.currentRate) {
+        toTake = item.meta.currentRate * item.amount;
+      } else if (item.meta && item.meta.sellPrice) {
+        toTake = (item.meta.sellPrice.unit || 0) * item.amount;
+      }
+      return total += toTake;
+    }, 0);
+    const message = `${quantity} PIT pour un total de ${fiatAmount} ${curCode} ont été vendu aujourd\'hui`;
+    return this._replyText(to, message);
   }
 
   _great(to) {

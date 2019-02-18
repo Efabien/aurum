@@ -1,5 +1,5 @@
 // App Config
-const { APP, TELEGRAM, NLP } = require('./config');
+const { APP, TELEGRAM, NLP, PAYPITE } = require('./config');
 const port = APP.port;
 const knwlg = require('botbrain/resources/knowledge');
 const knwlg2 = require('botbrain/resources/knowledge2');
@@ -9,6 +9,7 @@ const ErrorHandler = require('./middlewares/error-handler');
 const TelegramClient = require('telegram-bot-api');
 const MessageListner = require('./modules/telegram/message-listner');
 const PaypiteClient = require('./modules/paypite/paypite-client');
+const DataAnalyser = require('./modules/paypite/data-analyser');
 const Brain = require('botbrain/index');
 const MessageDispatcher = require('./modules/message-dispatcher');
 
@@ -20,9 +21,12 @@ const telegramClient = new TelegramClient({
     enabled: true
   }
 });
-const paypiteClient = new PaypiteClient();
+const paypiteClient = new PaypiteClient(PAYPITE);
+const dataAnalyser = new DataAnalyser();
 const brain = new Brain([knwlg2, knwlg], { degree: NLP.degree, scope: NLP.scope });
-const messageDispatcher = new MessageDispatcher({ brain, telegramClient, paypiteClient });
+const messageDispatcher = new MessageDispatcher(
+  { brain, telegramClient, paypiteClient, dataAnalyser }
+);
 const messageListner = new MessageListner({ telegramClient, messageDispatcher });
 messageListner.run();
 

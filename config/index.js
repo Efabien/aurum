@@ -1,18 +1,6 @@
-const APP = {
-  port: process.env.PORT || 3000
-};
-
-const TELEGRAM = {
-  token: process.env.AURUM_TELEGRAM_TOKEN
-};
-
-const NLP = {
-  degree: 2,
-  scope: 3
-};
+const env = process.env.NODE_ENV || 'DEV';
+const config = require(`./${env}`);
 
 module.exports = Object.freeze({
-  APP,
-  TELEGRAM,
-  NLP
+  ...config
 });
