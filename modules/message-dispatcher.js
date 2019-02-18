@@ -14,7 +14,7 @@ module.exports = class MessageDispatcher {
 
   async process(message) {
     try {
-      const analyse = this._detect(message.text);
+      const analyse = this._detect(message.text.replace('@AuriusBot', ''));
       const method = this._map[analyse.intent];
       if (!method) return this._unknown(message.chat.id);
       return this[method](message.chat.id, message.text);
