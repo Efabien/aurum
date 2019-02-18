@@ -20,7 +20,6 @@ module.exports = class MessageDispatcher {
       return this[method](message.chat.id, message.text);
     } catch (e) {
       throw e;
-      console.log(e);
     }
   }
 
@@ -49,7 +48,6 @@ module.exports = class MessageDispatcher {
   async askPaypiteMarketRates(to) {
     try {
       const data = await this._paypiteClient.getMarketRate();
-      throw new Error('Oups');
       const startMessage = '<b>Le cours sur le marché Paypite sont les suivants</b>: \n';
       const rates = data.cours.reduce((resp, item) => {
         return resp += `${item.paire} : ${item.meilleurPrix}\n`;
