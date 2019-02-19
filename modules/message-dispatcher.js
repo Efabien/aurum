@@ -1,9 +1,10 @@
 module.exports = class MessageDispatcher {
-  constructor(modules) {
+  constructor(modules, config) {
     this._brain = modules.brain;
     this._telegramClient = modules.telegramClient;
     this._paypiteClient = modules.paypiteClient;
     this._dataAnalyser = modules.dataAnalyser;
+    this._botName = config.botName;
     this.process = this.process.bind(this);
     this._map = {
       'greating': '_great',
@@ -14,7 +15,8 @@ module.exports = class MessageDispatcher {
 
   async process(message) {
     try {
-      const analyse = this._detect(message.text.replace('@AuriusBot', ''));
+      if (!this._canReceive(message)) return;
+      const analyse = this._detect(message.text.replace(this._botName, ''));
       const method = this._map[analyse.intent];
       if (!method) return this._unknown(message.chat.id);
       return this[method](message.chat.id, message.text);
@@ -23,10 +25,14 @@ module.exports = class MessageDispatcher {
     }
   }
 
+  _canReceive(message) {
+    if (!message.text) return;
+    if (message.chat.type === 'group' && !message.text.startsWith(this._botName)) return;
+    return true;
+  }
+
   _detect(text) {
-    const hold = this._brain.detect(text);
-    console.log(hold);
-    return hold
+    return this._brain.detect(text)
     .sort((a, b) => b.score - a.score)[0];
   }
 

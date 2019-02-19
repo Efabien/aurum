@@ -17,6 +17,18 @@ module.exports = class MessageListner {
         console.log(e);
       }
     });
+
+    this._telegramClient.on('inline.query', async (message) => {
+      try {
+        await this._dispatcher.process(message);
+      } catch (e) {
+        this._telegramClient.sendMessage({
+          chat_id: message.chat.id,
+          text: 'Ouppps, quelque chose c\'est mal passé!'
+        });
+        console.log(e);
+      }
+    });
   }
 };
 

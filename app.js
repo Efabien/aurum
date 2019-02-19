@@ -25,7 +25,8 @@ const paypiteClient = new PaypiteClient(PAYPITE);
 const dataAnalyser = new DataAnalyser();
 const brain = new Brain([knwlg2, knwlg], { degree: NLP.degree, scope: NLP.scope });
 const messageDispatcher = new MessageDispatcher(
-  { brain, telegramClient, paypiteClient, dataAnalyser }
+  { brain, telegramClient, paypiteClient, dataAnalyser },
+  { ...TELEGRAM }
 );
 const messageListner = new MessageListner({ telegramClient, messageDispatcher });
 messageListner.run();

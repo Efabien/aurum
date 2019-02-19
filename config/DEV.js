@@ -5,7 +5,8 @@ module.exports = Object.freeze(
     },
 
     TELEGRAM: {
-      token: process.env.AURUM_TELEGRAM_TOKEN
+      token: process.env.AURUM_TELEGRAM_TOKEN,
+      botName: '@Aurius_dev_bot' 
     },
 
     NLP: {
