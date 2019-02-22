@@ -21,6 +21,10 @@ module.exports = {
 		'askTodaysSellsByMArket': {
 			'texts': ['donne moi les quantités vendu sur le marché en', 'combien ont été vendu sur le marché de', 'donne moi le volume des vente sur le marché en'],
 			'pondered': ['vendu', 'marché', 'volume', 'ventes']
+		},
+		'askMarketDaylyEvolution': {
+			'texts': ['donne moi l\'évolution du marché en', 'progression du marché de'],
+			'pondered': ['évolution', 'progression', 'marché']
 		}
 	}
 }

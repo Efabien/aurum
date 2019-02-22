@@ -9,7 +9,8 @@ module.exports = class MessageDispatcher {
     this._map = {
       'greating': '_great',
       'askRate': 'askPaypiteMarketRates',
-      'askTodaysSellsByMArket': 'askTodaysSellsByMArket'
+      'askTodaysSellsByMArket': 'askTodaysSellsByMArket',
+      'askMarketDaylyEvolution': 'askMarketEvolutionOn2Rows' //askTodaysSellsByMArket
     };
   }
 
@@ -17,6 +18,7 @@ module.exports = class MessageDispatcher {
     try {
       if (!this._canReceive(message)) return;
       const analyse = this._detect(message.text.replace(this._botName, ''));
+      console.log(analyse);
       const method = this._map[analyse.intent];
       if (!method) return this._unknown(message.chat.id);
       return this[method](message.chat.id, message.text);
@@ -67,28 +69,36 @@ module.exports = class MessageDispatcher {
 
   async askTodaysSellsByMArket(to, text) {
     try {
-      const keys = this._brain.extract(text, 'currency');
-      const curCode = keys && keys.currency[0];
+      const curCode = this._getCurrency(text);
       if (!curCode) return this._replyText(to, 'Merci de bien préciser la devise du marché');
       const response = await this._paypiteClient.getExchangeHistory(curCode);
-      const holder = this._dataAnalyser.getTodaySells(response.data);
-      const quantity = holder.reduce((total, item) => {
-        return total += item.amount;
-      }, 0);
-      const fiatAmount = holder.reduce((total, item) => {
-        let toTake = 0;
-        if (item.meta && item.meta.currentRate) {
-          toTake = item.meta.currentRate * item.amount;
-        } else if (item.meta && item.meta.sellPrice) {
-          toTake = (item.meta.sellPrice.unit || 0) * item.amount;
-        }
-        return total += toTake;
-      }, 0);
+      const sells = this._dataAnalyser.getTodaySells(response.data);
+      const [quantity, fiatAmount]  = this._dataAnalyser.getQuantAndValueOfSells(sells);
       const message = `${quantity} PIT pour un total de ${fiatAmount} ${curCode} ont été vendu aujourd\'hui`;
       return this._replyText(to, message);
     } catch (e) {
       throw e;
     }
+  }
+
+  async askMarketEvolutionOn2Rows(to, text) {
+    try {
+      const curCode = this._getCurrency(text);
+      if (!curCode) return this._replyText(to, 'Merci de bien préciser la devise du marché');
+      const response = await this._paypiteClient.getExchangeHistory(curCode);
+      const sellsPerDay = this._dataAnalyser.sellsPerday(response.data);
+      const evolution = this._dataAnalyser.getMarketEvolutionOn2Rows(sellsPerDay[1], sellsPerDay[0]);
+      const message = `Le marché de la paypite en ${curCode} a évolué de ${evolution}`;
+      return this._replyText(to, message);
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  _getCurrency(text) {
+    const keys = this._brain.extract(text, 'currency');
+    const curCode = keys && keys.currency[0];
+    return curCode;
   }
 
   _great(to) {

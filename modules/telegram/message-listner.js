@@ -14,7 +14,7 @@ module.exports = class MessageListner {
           chat_id: message.chat.id,
           text: 'Ouppps, quelque chose c\'est mal passé!'
         });
-        console.log(e.message || e);
+        console.log(e);
       }
     });
   }

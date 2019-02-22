@@ -12,6 +12,30 @@ module.exports = class DataAnalyser {
     });
   }
 
+  getQuantAndValueOfSells(data) {
+    const quantity = data.reduce((total, item) => {
+      return total += item.amount;
+    }, 0);
+    const fiatAmount = data.reduce((total, item) => {
+      let toTake = 0;
+      if (item.meta && item.meta.currentRate) {
+        toTake = item.meta.currentRate * item.amount;
+      } else if (item.meta && item.meta.sellPrice) {
+        toTake = (item.meta.sellPrice.unit || 0) * item.amount;
+      }
+      return total += toTake;
+    }, 0);
+    return [quantity, fiatAmount];
+  }
+
+  getMarketEvolutionOn2Rows(row1, row2) {
+    const [,fiatAmount1] = this.getQuantAndValueOfSells(row1);
+    const [,fiatAmount2] = this.getQuantAndValueOfSells(row2);
+    const direction = (fiatAmount2 - fiatAmount1) < 0 ? '-' : '+';
+    const diff = (fiatAmount2 - fiatAmount1) > 0 ? (fiatAmount2 - fiatAmount1) : (fiatAmount1 - fiatAmount2);
+    return direction + ' ' + ( diff / fiatAmount1 * 100).toFixed(2) + '%';
+  }
+
   sellsPerday(data) {
     return data.reduce((accumulator, item) => {
       const currentDateTag = moment(item.createdAt).format('DD/MM/YYYY');
