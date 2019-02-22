@@ -29,11 +29,11 @@ module.exports = class DataAnalyser {
   }
 
   getMarketEvolutionOn2Rows(row1, row2) {
-    const [,fiatAmount1] = this.getQuantAndValueOfSells(row1);
-    const [,fiatAmount2] = this.getQuantAndValueOfSells(row2);
-    const direction = (fiatAmount2 - fiatAmount1) < 0 ? '-' : '+';
-    const diff = (fiatAmount2 - fiatAmount1) > 0 ? (fiatAmount2 - fiatAmount1) : (fiatAmount1 - fiatAmount2);
-    return direction + ' ' + ( diff / fiatAmount1 * 100).toFixed(2) + '%';
+    const [quantity1] = this.getQuantAndValueOfSells(row1);
+    const [quantity2] = this.getQuantAndValueOfSells(row2);
+    const direction = (quantity2 - quantity1) < 0 ? '-' : '+';
+    const diff = (quantity2 - quantity1) > 0 ? (quantity2 - quantity1) : (quantity1 - quantity2);
+    return direction + ' ' + ( diff / quantity1 * 100).toFixed(2) + '%';
   }
 
   sellsPerday(data) {

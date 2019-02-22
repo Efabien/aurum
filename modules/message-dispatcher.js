@@ -88,7 +88,7 @@ module.exports = class MessageDispatcher {
       const response = await this._paypiteClient.getExchangeHistory(curCode);
       const sellsPerDay = this._dataAnalyser.sellsPerday(response.data);
       const evolution = this._dataAnalyser.getMarketEvolutionOn2Rows(sellsPerDay[1], sellsPerDay[0]);
-      const message = `Le marché de la paypite en ${curCode} a évolué de ${evolution}`;
+      const message = `Le marché de la paypite en ${curCode} a évolué de ${evolution} sur les volumes de vente`;
       return this._replyText(to, message);
     } catch (e) {
       throw e;
