@@ -1,4 +1,5 @@
 const request = require('request-promise');
+const httpStatus = require('http-status');
 
 module.exports = class PaypiteClient {
   constructor(config) {
@@ -26,7 +27,14 @@ module.exports = class PaypiteClient {
       headers: {
         authorization: token
       }
-    }).then(resp => JSON.parse(resp));
+    })
+    .then(resp => JSON.parse(resp))
+    .catch(async (e) => {
+      if (e.statusCode !== httpStatus.UNAUTHORIZED) throw e;
+      console.log('Renewed token from Paypite');
+      this.token  = (await this.authenticate(this._login)).token;
+      return this._get(url, this.token);
+    });
   }
 
   _postPublic(url, body) {
