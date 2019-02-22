@@ -37,11 +37,21 @@ module.exports = class DataAnalyser {
   }
 
   sellsPerday(data) {
+    return this._splitData(data, 'DD/MM/YYYY');
+  }
+
+  sellsPerHour(data) {
+    return data.map(row => {
+      return this._splitData(row, 'H');
+    });
+  }
+
+  _splitData(data, format) {
     return data.reduce((accumulator, item) => {
-      const currentDateTag = moment(item.createdAt).format('DD/MM/YYYY');
+      const currentDateTag = moment(item.createdAt).format(format);
       const previusDateTag = !accumulator.length ?
         '0' :
-        moment(accumulator[accumulator.length - 1][0].createdAt).format('DD/MM/YYYY');
+        moment(accumulator[accumulator.length - 1][0].createdAt).format(format);
       if (previusDateTag !== currentDateTag){
         accumulator.push([item]);
         return accumulator;
