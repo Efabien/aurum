@@ -15,12 +15,14 @@ const MessageDispatcher = require('./modules/message-dispatcher');
 
 //utils
 const errorHandler = new ErrorHandler();
-const telegramClient = new TelegramClient({
-  token: TELEGRAM.token,
-  updates: {
-    enabled: true
+const telegramClient = new TelegramClient(
+  {
+    token: TELEGRAM.token
   }
-});
+);
+telegramClient.setWebhook(
+  { url: TELEGRAM.webhookUrl }
+);
 const paypiteClient = new PaypiteClient(PAYPITE);
 const dataAnalyser = new DataAnalyser();
 const brain = new Brain([knwlg2, knwlg], { degree: NLP.degree, scope: NLP.scope });
@@ -28,8 +30,8 @@ const messageDispatcher = new MessageDispatcher(
   { brain, telegramClient, paypiteClient, dataAnalyser },
   { ...TELEGRAM }
 );
-const messageListner = new MessageListner({ telegramClient, messageDispatcher });
-messageListner.run();
+//const messageListner = new MessageListner({ telegramClient, messageDispatcher });
+//messageListner.run();
 
 // Internal dependencies
 const ExpressBootstrapper = require('./modules/express-bootstrapper');
@@ -37,9 +39,14 @@ const ExpressBootstrapper = require('./modules/express-bootstrapper');
 //routes
 const Routes = require('./routes');
 const TestRoute = require('./routes/test');
+const Webhooks = require('./routes/webhooks');
 
 // routes instances
 const testRoute = new TestRoute();
+const webhooks = new Webhooks(
+  { messageDispatcher, telegramClient },
+  { telegramToken:  TELEGRAM.token }
+);
 
 // Bootstrap
 const expressBootstrapper = new ExpressBootstrapper(
@@ -49,7 +56,8 @@ expressBootstrapper.bootstrap();
 
 const routes = new Routes(
   [
-    testRoute
+    testRoute,
+    webhooks
   ],
   errorHandler
 );

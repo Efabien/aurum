@@ -6,7 +6,8 @@ module.exports = Object.freeze(
 
     TELEGRAM: {
       token: process.env.AURUM_TELEGRAM_TOKEN,
-      botName: '@Aurius_dev_bot' 
+      botName: '@Aurius_dev_bot',
+      webhookUrl: `${process.env.AURUM_SERVER}/webhooks/telegram/${encodeURI(process.env.AURUM_TELEGRAM_TOKEN)}`
     },
 
     NLP: {

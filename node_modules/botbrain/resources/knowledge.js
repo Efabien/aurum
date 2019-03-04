@@ -16,7 +16,7 @@ module.exports= {
   },
   intents:{
     'greating':{
-      'texts':[' bonjour',' salut ',' hello',' yo',' hey',' hi',' bonjour bot',' coucou',' salutation']
+      'texts':[' bonjour',' salut ']
     },
     'ask_price':{
       'texts':['Pourrais - je avoir les prix ?','Donnez moi les prix','Je souhaiterai avoir les prix',
