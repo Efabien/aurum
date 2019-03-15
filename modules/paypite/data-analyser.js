@@ -46,6 +46,28 @@ module.exports = class DataAnalyser {
     });
   }
 
+  weekAnalyse(history) {
+    const perDay = this.sellsPerday(history);
+    const lastDays = perDay.slice(0, 7);
+    return lastDays.map(day => {
+      return this.dayAnalyse(day);
+    });
+  }
+
+  dayAnalyse(data) {
+    data = data.map(item => {
+      item.meta.rate = item.meta.currentRate || item.meta.sellPrice.unit;
+      return item;
+    });
+    const opening = data[data.length - 1].meta.rate;
+    const closing = data[0].meta.rate;
+    const rates = data.map(item => item.meta.rate);
+    const low = Math.min(...rates);
+    const hight = Math.max(...rates); 
+    const [quantity, fiatAmount] = this.getQuantAndValueOfSells(data);
+    return { opening, closing, low, hight, quantity, fiatAmount, date: data[0].createdAt };
+  }
+
   _splitData(data, format) {
     return data.reduce((accumulator, item) => {
       const currentDateTag = moment(item.createdAt).format(format);

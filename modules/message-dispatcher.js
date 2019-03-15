@@ -1,3 +1,5 @@
+const moment = require('moment');
+
 module.exports = class MessageDispatcher {
   constructor(modules, config) {
     this._brain = modules.brain;
@@ -10,7 +12,7 @@ module.exports = class MessageDispatcher {
       'greating': '_great',
       'askRate': 'askPaypiteMarketRates',
       'askTodaysSellsByMArket': 'askTodaysSellsByMArket',
-      'askMarketDaylyEvolution': 'askMarketEvolutionOn2Rows' //askTodaysSellsByMArket
+      'askWeekAnalyse': 'askWeekAnalyse'
     };
   }
 
@@ -81,14 +83,21 @@ module.exports = class MessageDispatcher {
     }
   }
 
-  async askMarketEvolutionOn2Rows(to, text) {
+  async askWeekAnalyse(to, text) {
     try {
       const curCode = this._getCurrency(text);
       if (!curCode) return this._replyText(to, 'Merci de bien préciser la devise du marché');
       const response = await this._paypiteClient.getExchangeHistory(curCode);
-      const sellsPerDay = this._dataAnalyser.sellsPerday(response.data);
-      const evolution = this._dataAnalyser.getMarketEvolutionOn2Rows(sellsPerDay[1], sellsPerDay[0]);
-      const message = `Le marché de la paypite en ${curCode} a évolué de ${evolution} sur les volumes de vente`;
+      const datas = this._dataAnalyser.weekAnalyse(response.data);
+      const message = datas.reduce((response, data) => {
+        const day = `** ${moment(data.date).format('DD/MM/YYYY')} ** \n`;
+        const opening = `- ouverture : ${data.opening} ${curCode} \n`;
+        const closing = `- clôture : ${data.closing} ${curCode} \n`;
+        const low = `- prix le plus bas: ${data.low} ${curCode} \n`;
+        const hight = `- prix le plus haut: ${data.hight} ${curCode} \n`;
+        const volume = `${data.quantity} PIT ont été vendu pour ${data.fiatAmount} ${curCode} \n\n`;
+        return response += day + opening + closing + low + hight + volume;
+      }, '');
       return this._replyText(to, message);
     } catch (e) {
       throw e;
