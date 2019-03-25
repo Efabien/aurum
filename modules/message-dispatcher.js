@@ -57,7 +57,7 @@ module.exports = class MessageDispatcher {
   async askPaypiteMarketRates(to) {
     try {
       const data = await this._paypiteClient.getMarketRate();
-      const startMessage = '<b>Le cours sur le marché Paypite sont les suivants</b>: \n';
+      const startMessage = '<b>Le cours sur le marché Paypite sont les suivants </b>: \n';
       const rates = data.cours.reduce((resp, item) => {
         return resp += `${item.paire} : ${item.meilleurPrix}\n`;
       }, '');
