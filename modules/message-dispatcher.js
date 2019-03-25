@@ -71,7 +71,7 @@ module.exports = class MessageDispatcher {
   async askTodaysSellsByMArket(to, text) {
     try {
       const curCode = this._getCurrency(text);
-      if (!curCode) return this._replyText(to, 'Merci de bien préciser la devise du marché');
+      if (!curCode) return this._replyText(to, 'Merci de bien préciser la devise du marché!');
       const response = await this._paypiteClient.getExchangeHistory(curCode);
       const sells = this._dataAnalyser.getTodaySells(response.data);
       const [quantity, fiatAmount]  = this._dataAnalyser.getQuantAndValueOfSells(sells);
