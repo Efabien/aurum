@@ -36,8 +36,7 @@ module.exports = class MessageDispatcher {
   }
 
   _detect(text) {
-    return this._brain.detect(text)
-    .sort((a, b) => b.score - a.score)[0];
+    return this._brain.detect(text);
   }
 
   async _replyText(to, text) {
