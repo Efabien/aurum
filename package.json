@@ -30,7 +30,7 @@
     "helmet": "^3.15.1",
     "http-status": "^1.0.1",
     "joi": "^13.0.1",
-    "lodash": "^4.17.4",
+    "lodash": "^4.17.13",
     "moment": "^2.24.0",
     "mongoose": "^5.7.5",
     "mongoose-double": "0.0.1",
